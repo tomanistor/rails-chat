@@ -1,0 +1,32 @@
+.container-fluid
+  .row
+    .col-3.col-md-2.bg-dark.full-height.sidebar
+      .sidebar-content
+        %input.form-control.sidebar-form{ placeholder: "Enter a username", required: "", type: "text" }/
+        %h4.text-white.mt-5.text-center.username.d-none Hello
+
+    .col-9.col-md-10.bg-light.full-height
+      .container-fluid
+        .chat-box.py-2
+          %h4.username.d-none.mb-3
+
+          - @chats.each do |chat|
+            .col-12
+              .chat.bg-secondary.d-inline-block.text-left.text-white.mb-2
+                .chat-bubble
+                  %small.chat-username= chat.username
+                  %p.m-0.chat-message= chat.message
+
+        .chat-text-input
+          = form_with(model: @chat, remote: true, format: :json, id: 'chat-form') do |form|
+            - if @chat.errors.any?
+              #error_explanation
+                %h2
+                  = pluralize(@chat.errors.count, "error")
+                  prohibited this chat from being saved:
+                %ul
+                  - @chat.errors.full_messages.each do |message|
+                    %li= message
+            .field.position-relative
+              = form.text_field :message, id: :message, class: "form-control", required: true, disabled: true
+              = form.hidden_field :username, id: :username
